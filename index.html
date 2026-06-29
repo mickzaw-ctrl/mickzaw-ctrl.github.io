@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michał Ślusarczyk — SHZ Quantum</title>
+<meta name="description" content="Theoretical Physicist & Quantum Engineer. Author of SHZ Unification Theory, Spin(10) Theory of Everything, and QuantumHybridGraph.">
+<meta property="og:title" content="Michał Ślusarczyk — SHZ Quantum">
+<meta property="og:description" content="Theoretical Physicist | Quantum Computing | Theory of Everything">
+<meta property="og:url" content="https://mickzaw-ctrl.github.io">
+<style>
+:root {
+  --bg:       #03060f;
+  --surface:  #080f1e;
+  --surface2: #0c172e;
+  --border:   #162a50;
+  --c1: #00d4ff;
+  --c2: #7b2fff;
+  --c3: #00ff99;
+  --red:#ff4060;
+  --text: #ddeeff;
+  --muted: #5a7a9a;
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --mono: 'Cascadia Code','Fira Code','Courier New', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden;line-height:1.6;}
+
+/* ── CANVAS ── */
+#cvs{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.25;}
+
+/* ── UTILS ── */
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+.grad{background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.glow-line{height:1px;background:linear-gradient(90deg,transparent,var(--c1),var(--c2),transparent);opacity:.3;position:relative;z-index:1;}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(3,6,15,.88);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 40px;
+}
+.logo{font-size:.9rem;font-weight:800;letter-spacing:3px;color:var(--c1);text-transform:uppercase;}
+.logo em{color:var(--c2);font-style:normal;}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.82rem;letter-spacing:1px;transition:.2s;}
+.nav-links a:hover{color:var(--c1);}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:120px 24px 80px;
+}
+.avatar{
+  width:110px;height:110px;border-radius:50%;margin-bottom:28px;
+  border:3px solid var(--c1);box-shadow:0 0 32px rgba(0,212,255,.35);
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.8rem;font-weight:900;color:#fff;letter-spacing:-2px;
+}
+.badge-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:28px;}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.22);
+  border-radius:99px;padding:5px 14px;font-size:.72rem;
+  color:var(--c1);letter-spacing:1.5px;text-transform:uppercase;
+}
+.badge.purple{background:rgba(123,47,255,.07);border-color:rgba(123,47,255,.22);color:var(--c2);}
+.badge.green{background:rgba(0,255,153,.07);border-color:rgba(0,255,153,.22);color:var(--c3);}
+.badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+h1{font-size:clamp(2.6rem,6vw,5.2rem);font-weight:900;letter-spacing:-3px;line-height:1.05;margin-bottom:20px;}
+.sub{font-size:1.05rem;color:var(--muted);max-width:600px;margin-bottom:48px;line-height:1.75;}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.btn{
+  padding:13px 30px;border-radius:9px;font-size:.88rem;font-weight:600;
+  letter-spacing:.5px;text-decoration:none;transition:.2s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-p{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border:none;}
+.btn-p:hover{opacity:.82;transform:translateY(-2px);}
+.btn-o{border:1px solid var(--border);color:var(--text);background:transparent;}
+.btn-o:hover{border-color:var(--c1);color:var(--c1);}
+
+/* ── STATS ── */
+.stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:14px;margin:70px 0;
+}
+.sc{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:22px 18px;text-align:center;
+  position:relative;overflow:hidden;transition:.25s;
+}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--c1),var(--c2));}
+.sc:hover{border-color:var(--c1);transform:translateY(-3px);}
+.sc-num{font-size:2rem;font-weight:900;color:var(--c1);letter-spacing:-1px;}
+.sc-lbl{font-size:.7rem;color:var(--muted);margin-top:4px;letter-spacing:1.5px;text-transform:uppercase;}
+
+/* ── SECTIONS ── */
+section{padding:80px 0;}
+.sec-hd{font-size:1.75rem;font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
+.sec-sub{color:var(--muted);margin-bottom:44px;font-size:.93rem;}
+
+/* ── PROJECT CARDS ── */
+.projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;}
+.proj{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:26px;text-decoration:none;color:inherit;
+  transition:.25s;display:flex;flex-direction:column;gap:10px;
+  position:relative;overflow:hidden;
+}
+.proj::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,212,255,.04),rgba(123,47,255,.04));
+  opacity:0;transition:.25s;
+}
+.proj:hover{border-color:var(--c2);transform:translateY(-3px);}
+.proj:hover::after{opacity:1;}
+.proj-tag{
+  font-size:.68rem;letter-spacing:2px;text-transform:uppercase;
+  color:var(--c1);font-weight:600;
+}
+.proj-tag.phys{color:var(--c2);}
+.proj-tag.ml{color:var(--c3);}
+.proj-name{font-size:1.05rem;font-weight:700;}
+.proj-desc{font-size:.82rem;color:var(--muted);line-height:1.6;flex:1;}
+.proj-meta{display:flex;gap:14px;font-size:.75rem;color:var(--muted);margin-top:4px;}
+.proj-meta span{display:flex;align-items:center;gap:4px;}
+.proj-links{display:flex;gap:10px;margin-top:6px;}
+.proj-link{
+  font-size:.72rem;padding:4px 12px;border-radius:6px;text-decoration:none;
+  border:1px solid var(--border);color:var(--muted);transition:.2s;
+}
+.proj-link:hover{border-color:var(--c1);color:var(--c1);}
+.proj-link.live{border-color:rgba(0,255,153,.3);color:var(--c3);}
+.proj-link.live:hover{background:rgba(0,255,153,.08);}
+
+/* ── QPU RESULTS ── */
+.qpu-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:32px;
+}
+.qpu-grid2{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+@media(max-width:620px){.qpu-grid2{grid-template-columns:1fr;}}
+.qpu-title{font-size:.8rem;letter-spacing:2px;text-transform:uppercase;color:var(--c1);margin-bottom:18px;font-weight:700;}
+.qrow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(22,42,80,.6);font-size:.83rem;}
+.qrow:last-child{border-bottom:none;}
+.qk{color:var(--muted);}
+.qv{font-weight:600;font-family:var(--mono);}
+.qv.g{color:var(--c3);}
+.qv.b{color:var(--c1);}
+.qv.r{color:var(--red);}
+.signal-bars{margin-top:20px;}
+.srow{display:flex;align-items:center;gap:10px;margin:6px 0;}
+.slbl{width:130px;font-size:.75rem;color:var(--muted);}
+.sbar-w{flex:1;height:6px;background:rgba(255,255,255,.05);border-radius:3px;}
+.sbar{height:6px;border-radius:3px;}
+.sval{width:36px;text-align:right;font-size:.72rem;font-family:var(--mono);}
+
+/* ── PAPERS ── */
+.papers{display:flex;flex-direction:column;gap:14px;}
+.paper{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:22px 26px;display:flex;
+  align-items:flex-start;gap:20px;transition:.2s;
+}
+.paper:hover{border-color:var(--c2);}
+.paper-icon{font-size:1.8rem;flex-shrink:0;}
+.paper-body{}
+.paper-title{font-weight:700;margin-bottom:5px;font-size:.95rem;}
+.paper-venue{font-size:.75rem;color:var(--c2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.paper-desc{font-size:.82rem;color:var(--muted);line-height:1.6;}
+
+/* ── SKILLS ── */
+.skills{display:flex;flex-wrap:wrap;gap:10px;}
+.skill{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:7px 16px;font-size:.8rem;
+  color:var(--text);transition:.2s;
+}
+.skill:hover{border-color:var(--c1);color:var(--c1);}
+.skill.hi{border-color:rgba(0,212,255,.3);color:var(--c1);background:rgba(0,212,255,.06);}
+.skill.hi2{border-color:rgba(123,47,255,.3);color:var(--c2);background:rgba(123,47,255,.06);}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);padding:48px 0 32px;
+  text-align:center;color:var(--muted);font-size:.8rem;position:relative;z-index:1;
+}
+.footer-name{font-size:1.3rem;font-weight:800;letter-spacing:2px;color:var(--c1);margin-bottom:14px;}
+.footer-links{display:flex;gap:20px;justify-content:center;margin:16px 0;flex-wrap:wrap;}
+.footer-links a{color:var(--muted);text-decoration:none;transition:.2s;}
+.footer-links a:hover{color:var(--c1);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:12px 16px;}
+  .nav-links{display:none;}
+  .hero{padding-top:80px;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="cvs"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">SHZ <em>Quantum</em></div>
+  <div class="nav-links">
+    <a href="#projects">Projects</a>
+    <a href="#qpu">QPU Results</a>
+    <a href="#papers">Papers</a>
+    <a href="#skills">Stack</a>
+    <a href="https://github.com/mickzaw-ctrl" target="_blank">GitHub ↗</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="avatar">MŚ</div>
+    <div class="badge-row">
+      <span class="badge"><span class="dot"></span>Theoretical Physics</span>
+      <span class="badge purple"><span class="dot"></span>Quantum Computing</span>
+      <span class="badge green"><span class="dot"></span>Live QPU Tested</span>
+    </div>
+    <h1>Michał <span class="grad">Ślusarczyk</span></h1>
+    <p class="sub">
+      Theoretical physicist and quantum engineer. Author of the <strong>SHZ Unification Theory</strong>,
+      <strong>Spin(10) Theory of Everything</strong>, and <strong>QuantumHybridGraph</strong> —
+      bridging quantum gravity, grand unification, and real IBM quantum hardware.
+    </p>
+    <div class="hero-ctas">
+      <a href="https://github.com/mickzaw-ctrl/SHZ-Core-Framework" class="btn btn-p" target="_blank">⚛ SHZ Core Framework</a>
+      <a href="#projects" class="btn btn-o">View All Projects</a>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- STATS -->
+<div class="wrap">
+  <div class="stats">
+    <div class="sc"><div class="sc-num">22+</div><div class="sc-lbl">Repositories</div></div>
+    <div class="sc"><div class="sc-num">7</div><div class="sc-lbl">Publications</div></div>
+    <div class="sc"><div class="sc-num">156q</div><div class="sc-lbl">IBM Kingston QPU</div></div>
+    <div class="sc"><div class="sc-num">Spin(10)</div><div class="sc-lbl">ToE Model</div></div>
+    <div class="sc"><div class="sc-num">18</div><div class="sc-lbl">Qubit Pipeline</div></div>
+    <div class="sc"><div class="sc-num">9.97</div><div class="sc-lbl">von Neumann bits</div></div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-hd">Featured <span class="grad">Projects</span></div>
+    <p class="sec-sub">Active research repositories — quantum theory meets real hardware</p>
+    <div class="projects">
+
+      <a href="https://github.com/mickzaw-ctrl/SHZ-Core-Framework" class="proj" target="_blank">
+        <div class="proj-tag phys">🌌 Unified Theory</div>
+        <div class="proj-name">SHZ-Core-Framework</div>
+        <div class="proj-desc">Main repository for the SHZ-U unification theory. Integrates Spin(10) ToE, Horizon Networks, BCC symmetry, emergent spacetime, and Monte Carlo simulations into a single framework.</div>
+        <div class="proj-meta">
+          <span>🐍 Python</span>
+          <span>⭐ Core</span>
+        </div>
+      </a>
+
+      <a href="https://mickzaw-ctrl.github.io/spin10-toe/" class="proj" target="_blank">
+        <div class="proj-tag phys">🌀 Theory of Everything</div>
+        <div class="proj-name">spin10-toe</div>
+        <div class="proj-desc">SHZSpin10QuantumEngine v8.0: relational graph Monte Carlo, 38 testable predictions, Immirzi γ=0.2739. Full heptalogy (7 papers). QPU-tested on IBM Kingston 156q.</div>
+        <div class="proj-meta">
+          <span>🐍 Python</span>
+          <span>⚛ QPU Tested</span>
+        </div>
+        <div class="proj-links">
+          <span class="proj-link live">🌐 Live Site</span>
+          <span class="proj-link">📄 Release v18core-qpu-test-1</span>
+        </div>
+      </a>
+
+      <a href="https://mickzaw-ctrl.github.io/QuantumHybridGraph/" class="proj" target="_blank">
+        <div class="proj-tag ml">⚡ Quantum ML</div>
+        <div class="proj-name">QuantumHybridGraph</div>
+        <div class="proj-desc">Quantum-inspired hybrid evolutionary graph toolkit. QAOA MaxClique, Grover clique search, BGP/SDN integration, AdaptiveNRE self-healing. 18-qubit trading pipeline.</div>
+        <div class="proj-meta">
+          <span>🐍 Python</span>
+          <span>📊 v0.1.0</span>
+        </div>
+        <div class="proj-links">
+          <span class="proj-link live">🌐 Live Site</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/mickzaw-ctrl/SHZSpin10-Quantum-Engine" class="proj" target="_blank">
+        <div class="proj-tag">🚀 HPC Engine</div>
+        <div class="proj-name">SHZSpin10-Quantum-Engine</div>
+        <div class="proj-desc">v14.4 high-performance engine deriving physical constants (α ≈ 1/137.036) from Spin(10) relational graph topology. 191+ Giga-OPS Mojo/C++ kernel. Exascale-ready.</div>
+        <div class="proj-meta">
+          <span>🐍 Python</span>
+          <span>⚡ 191 GOPS</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/mickzaw-ctrl/bcc-attention-pytorch" class="proj" target="_blank">
+        <div class="proj-tag ml">🧠 Deep Learning</div>
+        <div class="proj-name">bcc-attention-pytorch</div>
+        <div class="proj-desc">PyTorch implementations of Holographic Attention Mechanism via Boundary Consistency Condition. SHZ-BCC Z₂³ geometric group symmetry applied to transformer architectures.</div>
+        <div class="proj-meta">
+          <span>🐍 Python</span>
+          <span>🔥 PyTorch</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/mickzaw-ctrl/SHZ-BCC-Pheno-Toolkit" class="proj" target="_blank">
+        <div class="proj-tag phys">🔬 Phenomenology</div>
+        <div class="proj-name">SHZ-BCC-Pheno-Toolkit</div>
+        <div class="proj-desc">Python & ML toolkit for SHZ-BCC phenomenological and cosmological consequences: Quantum Gravity, LHC predictions, Dark Matter, Gravitational Waves.</div>
+        <div class="proj-meta">
+          <span>🐍 Python + TeX</span>
+          <span>🌌 Cosmology</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- QPU RESULTS -->
+<section id="qpu">
+  <div class="wrap">
+    <div class="sec-hd">Real <span class="grad">QPU Results</span></div>
+    <p class="sec-sub">IBM Kingston (156 qubits, Eagle r3) — live quantum hardware benchmarks</p>
+    <div class="qpu-box">
+      <div class="qpu-grid2">
+        <div>
+          <div class="qpu-title">⚛ 18core ZZFeatureMap (18 qubits)</div>
+          <div class="qrow"><span class="qk">Job ID</span><span class="qv b">d90dp9emvj5c73ej2ubg</span></div>
+          <div class="qrow"><span class="qk">Backend</span><span class="qv">ibm_kingston 156q</span></div>
+          <div class="qrow"><span class="qk">Gate depth</span><span class="qv">59 → 200 transpiled</span></div>
+          <div class="qrow"><span class="qk">Unique states</span><span class="qv b">1,023 / 262,144</span></div>
+          <div class="qrow"><span class="qk">Von Neumann S</span><span class="qv b">9.998 / 18.0 bits</span></div>
+          <div class="qrow"><span class="qk">Composite signal</span><span class="qv g">🟢 BUY +4</span></div>
+          <div class="qrow"><span class="qk">Status</span><span class="qv g">✅ DONE</span></div>
+          <div class="signal-bars">
+            <div style="font-size:.7rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Trading Feature Map</div>
+            <div class="srow"><span class="slbl">price_momentum</span><div class="sbar-w"><div class="sbar" style="width:57%;background:var(--c3)"></div></div><span class="sval" style="color:var(--c3)">0.57</span></div>
+            <div class="srow"><span class="slbl">finbert_sentiment</span><div class="sbar-w"><div class="sbar" style="width:57%;background:var(--c3)"></div></div><span class="sval" style="color:var(--c3)">0.57</span></div>
+            <div class="srow"><span class="slbl">orderflow</span><div class="sbar-w"><div class="sbar" style="width:71%;background:var(--c3)"></div></div><span class="sval" style="color:var(--c3)">0.71</span></div>
+            <div class="srow"><span class="slbl">volatility_24h</span><div class="sbar-w"><div class="sbar" style="width:100%;background:var(--c3)"></div></div><span class="sval" style="color:var(--c3)">1.00</span></div>
+            <div class="srow"><span class="slbl">news_impact</span><div class="sbar-w"><div class="sbar" style="width:29%;background:var(--red)"></div></div><span class="sval" style="color:var(--red)">0.29</span></div>
+            <div class="srow"><span class="slbl">emotional_signal</span><div class="sbar-w"><div class="sbar" style="width:57%;background:var(--c3)"></div></div><span class="sval" style="color:var(--c3)">0.57</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="qpu-title">🌀 Spin(10) QAOA (12 qubits, γ=0.2739)</div>
+          <div class="qrow"><span class="qk">Job ID</span><span class="qv b">d90dkp0pknjs73a28he0</span></div>
+          <div class="qrow"><span class="qk">Backend</span><span class="qv">ibm_kingston 156q</span></div>
+          <div class="qrow"><span class="qk">Gate depth</span><span class="qv">28 → 193 transpiled</span></div>
+          <div class="qrow"><span class="qk">Unique states</span><span class="qv b">810 / 4,096</span></div>
+          <div class="qrow"><span class="qk">Top state</span><span class="qv g">|000…0⟩ GUT vacuum ✅</span></div>
+          <div class="qrow"><span class="qk">Runtime</span><span class="qv g">6.2s</span></div>
+          <div class="qrow"><span class="qk">Status</span><span class="qv g">✅ DONE</span></div>
+          <div style="margin-top:24px;padding:16px;background:rgba(0,255,153,.04);border:1px solid rgba(0,255,153,.15);border-radius:10px;">
+            <div style="font-size:.72rem;color:var(--c3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">GUT Vacuum Sector Analysis</div>
+            <div class="qrow"><span class="qk">Fermion gen.</span><span class="qv" style="font-size:.8rem">|000⟩ ✅</span></div>
+            <div class="qrow"><span class="qk">Gauge bosons</span><span class="qv" style="font-size:.8rem">|0000⟩ ✅</span></div>
+            <div class="qrow"><span class="qk">Higgs sector</span><span class="qv" style="font-size:.8rem">|000⟩ ✅</span></div>
+            <div class="qrow"><span class="qk">Gravity sector</span><span class="qv" style="font-size:.8rem">|00⟩ ✅</span></div>
+            <div style="margin-top:12px;font-size:.8rem;color:var(--c3);font-weight:600;">
+              GUT vacuum confirmed on real hardware
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;">
+        <a href="https://github.com/mickzaw-ctrl/spin10-toe/releases/tag/v18core-qpu-test-1" target="_blank" style="font-size:.8rem;color:var(--c1);text-decoration:none;">🚀 Release v18core-qpu-test-1 ↗</a>
+        <a href="https://github.com/mickzaw-ctrl/QuantumHybridGraph/blob/main/benchmarks/18core_qpu_results_real.md" target="_blank" style="font-size:.8rem;color:var(--c1);text-decoration:none;">📄 Full Benchmark Report ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- PAPERS -->
+<section id="papers">
+  <div class="wrap">
+    <div class="sec-hd">Publications & <span class="grad">Preprints</span></div>
+    <p class="sec-sub">Theoretical physics research — unification, quantum gravity, cosmology</p>
+    <div class="papers">
+      <div class="paper">
+        <div class="paper-icon">📜</div>
+        <div class="paper-body">
+          <div class="paper-venue">SHZ Unification Series — 2026</div>
+          <div class="paper-title">SHZ-U: Compact Unification via Horizon Networks</div>
+          <div class="paper-desc">Unification theory from discrete horizon boundary networks. Derives Standard Model gauge groups, three fermion generations, and cosmological constant from Spin(10) symmetry breaking.</div>
+        </div>
+      </div>
+      <div class="paper">
+        <div class="paper-icon">📜</div>
+        <div class="paper-body">
+          <div class="paper-venue">Quantum Gravity — Preprint 2026</div>
+          <div class="paper-title">Universal Corner Symmetry Constraints on Stringy Black Holes</div>
+          <div class="paper-desc">D-brane microstate counting via boundary consistency conditions. Derives Bekenstein-Hawking entropy from combinatorial Z₂³ corner symmetry group with stringy corrections.</div>
+        </div>
+      </div>
+      <div class="paper">
+        <div class="paper-icon">📜</div>
+        <div class="paper-body">
+          <div class="paper-venue">LQG — Preprint 2026</div>
+          <div class="paper-title">Exact Combinatorial State Counting of LQG Black Holes under Discrete Corner Symmetry</div>
+          <div class="paper-desc">Resolves the Immirzi parameter ambiguity (γ=0.2739) via SHZ-BCC discrete corner symmetry constraints applied to loop quantum gravity spin networks.</div>
+        </div>
+      </div>
+      <div class="paper">
+        <div class="paper-icon">📜</div>
+        <div class="paper-body">
+          <div class="paper-venue">Cosmology — Preprint 2026</div>
+          <div class="paper-title">Cosmological Constant as Residual Defect of Discrete Corner Symmetry on the de Sitter Horizon</div>
+          <div class="paper-desc">Explains the smallness of Λ as a residual topological defect on the de Sitter horizon, emerging naturally from SHZ-BCC boundary symmetry breaking.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-hd">Tech <span class="grad">Stack</span></div>
+    <p class="sec-sub">Quantum computing, theoretical physics, and ML tooling</p>
+    <div class="skills">
+      <span class="skill hi">Qiskit</span>
+      <span class="skill hi">Qiskit Runtime</span>
+      <span class="skill hi">IBM Quantum</span>
+      <span class="skill hi">QAOA</span>
+      <span class="skill hi2">Spin(10)</span>
+      <span class="skill hi2">LQG</span>
+      <span class="skill hi2">Quantum Gravity</span>
+      <span class="skill hi2">GUT / SHZ-BCC</span>
+      <span class="skill">Python</span>
+      <span class="skill">NumPy</span>
+      <span class="skill">NetworkX</span>
+      <span class="skill">PyTorch</span>
+      <span class="skill">PennyLane</span>
+      <span class="skill">Mojo / C++</span>
+      <span class="skill">Monte Carlo</span>
+      <span class="skill">QUBO</span>
+      <span class="skill">LaTeX</span>
+      <span class="skill">BGP / SDN</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-name">MICHAŁ ŚLUSARCZYK</div>
+    <p>Theoretical Physicist · Quantum Engineer · SHZ Quantum</p>
+    <div class="footer-links">
+      <a href="https://github.com/mickzaw-ctrl" target="_blank">GitHub</a>
+      <a href="https://github.com/mickzaw-ctrl/SHZ-Core-Framework" target="_blank">SHZ-Core-Framework</a>
+      <a href="https://mickzaw-ctrl.github.io/spin10-toe/" target="_blank">Spin(10) ToE</a>
+      <a href="https://mickzaw-ctrl.github.io/QuantumHybridGraph/" target="_blank">QuantumHybridGraph</a>
+    </div>
+    <p style="margin-top:16px;">Built with ⚛ by Emilka — SHZ Quantum AI</p>
+  </div>
+</footer>
+
+<script>
+// ── PARTICLE NETWORK ──────────────────────────────────────────────────────────
+const C = document.getElementById('cvs');
+const ctx = C.getContext('2d');
+let W, H, nodes = [];
+
+function resize(){ W = C.width = window.innerWidth; H = C.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+class N {
+  constructor(){ this.r(); }
+  r(){
+    this.x = Math.random()*W; this.y = Math.random()*H;
+    this.vx = (Math.random()-.5)*.35; this.vy = (Math.random()-.5)*.35;
+    this.rad = Math.random()*1.8+.8;
+    this.col = Math.random()>.5 ? '#00d4ff' : '#7b2fff';
+    this.alpha = Math.random()*.7+.3;
+  }
+  update(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>W||this.y<0||this.y>H) this.r(); }
+  draw(){
+    ctx.globalAlpha = this.alpha;
+    ctx.beginPath(); ctx.arc(this.x,this.y,this.rad,0,Math.PI*2);
+    ctx.fillStyle=this.col; ctx.fill();
+    ctx.globalAlpha=1;
+  }
+}
+
+for(let i=0;i<90;i++) nodes.push(new N());
+
+function edges(){
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<130){
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x,nodes[i].y);
+        ctx.lineTo(nodes[j].x,nodes[j].y);
+        ctx.strokeStyle=`rgba(0,212,255,${(1-d/130)*.25})`;
+        ctx.lineWidth=.4; ctx.stroke();
+      }
+    }
+  }
+}
+
+function frame(){
+  ctx.clearRect(0,0,W,H);
+  nodes.forEach(n=>{n.update();n.draw();});
+  edges();
+  requestAnimationFrame(frame);
+}
+frame();
+</script>
+</body>
+</html>
